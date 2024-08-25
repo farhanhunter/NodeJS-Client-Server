@@ -1,0 +1,20 @@
+{
+  "development": {
+    "username": "admin",
+    "password": "admin123",
+    "database": "mydatabase",
+    "host": "localhost",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "admin",
+    "password": "admin123",
+    "database": "mydatabase_test",
+    "host": "localhost",
+    "dialect": "postgres"
+  },
+  "production": {
+    "use_env_variable": "DATABASE_URL",
+    "dialect": "postgres"
+  }
+}
