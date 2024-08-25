@@ -21,5 +21,31 @@
     "average_rating": "9.00",
     "createdAt": "2024-08-24T22:44:01.074Z",
     "updatedAt": "2024-08-24T22:44:01.074Z"
+  },
+  {
+    "id": 2,
+    "title": "Upin Ipin",
+    "original_title": "Upin Ipin",
+    "author": "Tok Dalang",
+    "artist": "Ahtong",
+    "description": "Yatim",
+    "status": "Ongoing",
+    "publication_year": 2012,
+    "demographic": "Kartun",
+    "genres": [
+      "Funny",
+      "Drama",
+      "Komedi"
+    ],
+    "themes": [
+      "Malay",
+      "Melayu"
+    ],
+    "cover_image_url": "upinipin.com",
+    "publisher": "UNESCO",
+    "total_chapters": 201,
+    "average_rating": "8.00",
+    "updatedAt": "2024-08-24T23:40:52.516Z",
+    "createdAt": "2024-08-24T23:40:52.516Z"
   }
 ]

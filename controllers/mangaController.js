@@ -1,4 +1,5 @@
 const { Manga } = require("../models");
+const { Op } = require("sequelize");
 
 exports.createManga = async (req, res) => {
   try {
