@@ -1,5 +1,6 @@
 const express = require("express");
 const mangaRoutes = require("./routes/mangaRoutes");
+const publisherRoutes = require("./routes/publisherRoutes");
 const errorHandler = require("./middleware/errorHandler");
 const { sequelize } = require("./models");
 
@@ -8,6 +9,7 @@ const app = express();
 app.use(express.json());
 
 app.use("/mangas", mangaRoutes);
+app.use("/publishers", publisherRoutes);
 
 app.use(errorHandler);
 

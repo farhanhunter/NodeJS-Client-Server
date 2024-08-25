@@ -19,6 +19,14 @@ function writeData(data) {
 }
 
 async function createManga() {
+  const publisherName = await getUserInput("Enter publisher name: ");
+  const publisherId = await getPublisherIdByName(publisherName);
+
+  if (!publisherId) {
+    console.error("Publisher not found or error occurred.");
+    return;
+  }
+
   const manga = {
     title: await getUserInput("Enter manga title: "),
     original_title: await getUserInput("Enter original title (optional): "),
@@ -37,7 +45,7 @@ async function createManga() {
       .split(",")
       .map((t) => t.trim()),
     cover_image_url: await getUserInput("Enter cover image URL: "),
-    publisher: await getUserInput("Enter publisher: "),
+    publisherId: publisherId, // Menggunakan publisherId yang didapatkan
     total_chapters: parseInt(await getUserInput("Enter total chapters: ")),
     average_rating: parseFloat(await getUserInput("Enter average rating: ")),
   };
@@ -173,6 +181,22 @@ async function searchMangas() {
       "Error searching mangas:",
       error.response ? error.response.data : error.message
     );
+  }
+}
+
+async function getPublisherIdByName(name) {
+  try {
+    const response = await axios.get(
+      `http://localhost:4000/publishers?name=${name}`
+    );
+    const publisher = response.data[0]; // Asumsikan nama publisher unik
+    return publisher ? publisher.id : null;
+  } catch (error) {
+    console.error(
+      "Error fetching publisher ID:",
+      error.response ? error.response.data : error.message
+    );
+    return null;
   }
 }
 

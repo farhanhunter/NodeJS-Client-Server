@@ -1,9 +1,52 @@
-const { Manga } = require("../models");
+const { Manga, Publisher, Genre, Author } = require("../models");
 const { Op } = require("sequelize");
 
 exports.createManga = async (req, res) => {
   try {
-    const manga = await Manga.create(req.body);
+    const {
+      title,
+      original_title,
+      author,
+      artist,
+      description,
+      status,
+      publication_year,
+      demographic,
+      genres,
+      themes,
+      cover_image_url,
+      publisherId,
+      total_chapters,
+      average_rating,
+    } = req.body;
+
+    // Membuat Manga baru
+    const manga = await Manga.create({
+      title,
+      original_title,
+      author,
+      artist,
+      description,
+      status,
+      publication_year,
+      demographic,
+      cover_image_url,
+      publisherId,
+      total_chapters,
+      average_rating,
+    });
+
+    // Menyertakan genre dan author jika ada
+    if (genres && genres.length > 0) {
+      const genreInstances = await Genre.findAll({ where: { name: genres } });
+      await manga.addGenres(genreInstances);
+    }
+
+    if (themes && themes.length > 0) {
+      const themeInstances = await Theme.findAll({ where: { name: themes } });
+      await manga.addThemes(themeInstances);
+    }
+
     res.status(201).json(manga);
   } catch (error) {
     res
@@ -14,7 +57,13 @@ exports.createManga = async (req, res) => {
 
 exports.getAllMangas = async (req, res) => {
   try {
-    const mangas = await Manga.findAll();
+    const mangas = await Manga.findAll({
+      include: [
+        { model: Publisher, attributes: ["name"] },
+        { model: Genre, attributes: ["name"] },
+        { model: Author, attributes: ["name"] },
+      ],
+    });
     res.json(mangas);
   } catch (error) {
     res
@@ -25,7 +74,13 @@ exports.getAllMangas = async (req, res) => {
 
 exports.getMangaById = async (req, res) => {
   try {
-    const manga = await Manga.findByPk(req.params.id);
+    const manga = await Manga.findByPk(req.params.id, {
+      include: [
+        { model: Publisher, attributes: ["name"] },
+        { model: Genre, attributes: ["name"] },
+        { model: Author, attributes: ["name"] },
+      ],
+    });
     if (!manga) {
       return res.status(404).json({ message: "Manga not found" });
     }
@@ -39,14 +94,54 @@ exports.getMangaById = async (req, res) => {
 
 exports.updateManga = async (req, res) => {
   try {
-    const [updated] = await Manga.update(req.body, {
-      where: { id: req.params.id },
+    const manga = await Manga.findByPk(req.params.id);
+    if (!manga) return res.status(404).json({ message: "Manga not found" });
+
+    const {
+      title,
+      original_title,
+      author,
+      artist,
+      description,
+      status,
+      publication_year,
+      demographic,
+      genres,
+      themes,
+      cover_image_url,
+      publisherId,
+      total_chapters,
+      average_rating,
+    } = req.body;
+
+    // Update Manga
+    await manga.update({
+      title,
+      original_title,
+      author,
+      artist,
+      description,
+      status,
+      publication_year,
+      demographic,
+      cover_image_url,
+      publisherId,
+      total_chapters,
+      average_rating,
     });
-    if (updated) {
-      const updatedManga = await Manga.findByPk(req.params.id);
-      return res.json(updatedManga);
+
+    // Update genres and themes if provided
+    if (genres && genres.length > 0) {
+      const genreInstances = await Genre.findAll({ where: { name: genres } });
+      await manga.setGenres(genreInstances);
     }
-    throw new Error("Manga not found");
+
+    if (themes && themes.length > 0) {
+      const themeInstances = await Theme.findAll({ where: { name: themes } });
+      await manga.setThemes(themeInstances);
+    }
+
+    res.status(200).json(manga);
   } catch (error) {
     res
       .status(500)

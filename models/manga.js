@@ -4,9 +4,23 @@ const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Manga extends Model {
     static associate(models) {
-      // define association here if you have any
+      // Relasi One-to-Many dengan Publisher
+      Manga.belongsTo(models.Publisher, { foreignKey: "publisherId" });
+
+      // Relasi Many-to-Many dengan Genre
+      Manga.belongsToMany(models.Genre, {
+        through: "MangaGenre",
+        foreignKey: "mangaId",
+      });
+
+      // Relasi Many-to-Many dengan Author
+      Manga.belongsToMany(models.Author, {
+        through: "MangaAuthor",
+        foreignKey: "mangaId",
+      });
     }
   }
+
   Manga.init(
     {
       title: {
@@ -29,7 +43,6 @@ module.exports = (sequelize, DataTypes) => {
       genres: DataTypes.ARRAY(DataTypes.STRING),
       themes: DataTypes.ARRAY(DataTypes.STRING),
       cover_image_url: DataTypes.STRING,
-      publisher: DataTypes.STRING,
       total_chapters: DataTypes.INTEGER,
       average_rating: DataTypes.DECIMAL(3, 2),
     },
@@ -40,5 +53,6 @@ module.exports = (sequelize, DataTypes) => {
       underscored: true,
     }
   );
+
   return Manga;
 };
